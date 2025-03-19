@@ -64,7 +64,7 @@ public class Splitwise {
     //function to simplify the intertwined debts and suggest transactions to  minimize their number
     public void debtSimplify(){
         Map<String, Map<String, Double>> lenderBorrowerSimplified = simplifyBorrowerLender();
-        PriorityQueue<Map.Entry<String, Double>> borrower = new PriorityQueue<>(Comparator.comparingDouble(Map.Entry::getValue));
+        PriorityQueue<Map.Entry<String, Double>> borrower = new PriorityQueue<>(Comparator.comparingDouble(Map.Entry::getValue));   //Method Reference
         PriorityQueue<Map.Entry<String, Double>> lender = new PriorityQueue<>((a,b) -> Double.compare(b.getValue(),a.getValue()));
         for (Map.Entry<String, Double> entry :
                 lenderBorrowerSimplified.get("Borrower").entrySet()) {

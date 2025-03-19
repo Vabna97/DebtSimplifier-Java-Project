@@ -17,6 +17,7 @@ public class SplitwiseMain {
         System.out.print("Welcome to BILLS SPLIT");
         Splitwise splitwise = new Splitwise(members, expenses);
         int choice = 0;
+
         System.out.println("What can I do:");
         while (true) {
             displayOptions();
@@ -103,7 +104,7 @@ public class SplitwiseMain {
         }
         for (Transaction t :
                 transactions) {
-            System.out.println(t.getFrom() + "paid back Rs." + t.getAmount() + " to " + t.getTo());
+            System.out.println(t.getFrom() + " paid back Rs." + t.getAmount() + " to " + t.getTo());
         }
     }
 
