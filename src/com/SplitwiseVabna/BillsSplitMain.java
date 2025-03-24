@@ -3,28 +3,54 @@ package com.SplitwiseVabna;
 import java.io.*;
 import java.util.*;
 
-public class SplitwiseMain {
+public class BillsSplitMain {
 
     public static void main(String[] args) throws IOException {
 	// write your code here
-        HashSet<String> members = new HashSet<>();
-        ArrayList expenses = new ArrayList();
+        HashSet<String> members = new HashSet<>();/*HashSet ensures that all elements are unique, and it does not allow duplicates.
+        HashSet does not maintain the order of elements. It provides constant-time (O(1)) performance for adding, removing, and checking the existence of elements.*/
+        ArrayList expenses = new ArrayList<>();/*ArrayList maintains the insertion order of elements, allowing access by index.
+        ArrayList permits duplicate elements.It provides fast (O(1)) access to elements using their index.*/
         List<Transaction> transactions = new ArrayList<>();
 
         InputStreamReader read = new InputStreamReader(System.in);
         BufferedReader in = new BufferedReader(read);
-        SplitwiseMain ob = new SplitwiseMain();
-        System.out.print("Welcome to BILLS SPLIT");
-        Splitwise splitwise = new Splitwise(members, expenses);
+        BillsSplitMain ob = new BillsSplitMain();
+        System.out.println("Welcome to BILLS SPLIT");
+        BillsSplit billsSplit = new BillsSplit(members, expenses);
+
+        System.out.println("Enter details of expense:");
+
+        ob.addExpense(expenses, members, in, billsSplit);
+        System.out.println("-----------------------------------------------------------------------------------------------------------------------");
+
+        System.out.println("Do you want to add more members (Y / y):");
+        char c = Character.toLowerCase(in.readLine().charAt(0));
+        if(c == 'y')
+            ob.addMembers(members, in);
+        System.out.println("-----------------------------------------------------------------------------------------------------------------------");
+
+        ob.viewExpenses(expenses);
+        System.out.println("-----------------------------------------------------------------------------------------------------------------------");
+
+        billsSplit.calculateBalancesOfEachMember();
+        ob.viewBalancesOfEachMember(billsSplit.getBal());
+        System.out.println("-----------------------------------------------------------------------------------------------------------------------");
+
+
         int choice = 0;
 
-        System.out.println("What can I do:");
+
         while (true) {
+            System.out.println("-----------------------------------------------------------------------------------------------------------------------");
+            System.out.println("What can I do:");
+
             displayOptions();
+            System.out.println("-----------------------------------------------------------------------------------------------------------------------");
             choice = Integer.parseInt(in.readLine());
             switch (choice) {
                 case 1:
-                    ob.addExpense(expenses, members, in, splitwise);
+                    ob.addExpense(expenses, members, in, billsSplit);
                     break;
                 case 2:
                     ob.addMembers(members, in);
@@ -33,14 +59,13 @@ public class SplitwiseMain {
                     ob.viewExpenses(expenses);
                     break;
                 case 4:
-                    splitwise.calculateBalancesOfEachMember();
-                    ob.viewBalancesOfEachMember(splitwise.getBal());
+                    ob.viewBalancesOfEachMember(billsSplit.getBal());
                     break;
                 case 5:
-                    splitwise.debtSimplify();
+                    billsSplit.debtSimplify();
                     break;
                 case 6:
-                    Transaction t = splitwise.splitExpense(in);
+                    Transaction t = billsSplit.splitExpense(in);
                     if (t == null) System.out.println("Transaction Unsuccessful");
                     else {
                         System.out.println("Transaction Successful");
@@ -51,7 +76,7 @@ public class SplitwiseMain {
                     ob.viewTransaction(transactions);
                     break;
                 case 8:
-                    ob.viewLendersBorrowers(splitwise.simplifyBorrowerLender());
+                    ob.viewLendersBorrowers(billsSplit.simplifyBorrowerLender());
                     break;
                 case 9:
                     return;
@@ -62,10 +87,10 @@ public class SplitwiseMain {
     }
 
     public static void displayOptions(){
-        System.out.println("1. Add expense");
-        System.out.println("2. Add members");
-        System.out.println("3. Expenses");
-        System.out.println("4. Balance of Each Member");
+//        System.out.println("1. Add expense");   //done
+//        System.out.println("2. Add members");   //done
+        System.out.println("3. Expenses");  //done
+        System.out.println("4. Balance of Each Member");    //done
         System.out.println("5. Debt Simplifier");
         System.out.println("6. Return Money Transaction");
         System.out.println("7. View All Return Transactions");
@@ -80,11 +105,13 @@ public class SplitwiseMain {
         }
         Map<String, Double> lender = simplifyBorrowerLender.get("Lender");
         Map<String, Double> borrower = simplifyBorrowerLender.get("Borrower");
+        boolean f1 = false, f2 = false;
         if (!lender.isEmpty()) {
             System.out.println("Lenders:");
             for (Map.Entry<String, Double> entry :
                     lender.entrySet()) {
                 System.out.println(entry.getKey());
+                f1 = !f1;
             }
 
         }
@@ -93,13 +120,15 @@ public class SplitwiseMain {
             for (Map.Entry<String, Double> entry :
                     borrower.entrySet()) {
                 System.out.println(entry.getKey());
+                f2 = !f2;
             }
-
+            if (f1 && f2)
+                System.out.println("There are no lenders and borrowers");
         }
     }
 
     private void viewTransaction(List<Transaction> transactions) {
-        if (transactions == null) {
+        if (transactions.isEmpty()) {
             System.out.println("Nobody returned money yet");
         }
         for (Transaction t :
@@ -113,7 +142,7 @@ public class SplitwiseMain {
             System.out.println("Data has not been added yet");
             return;
         }
-
+        System.out.println("Balance of each member");
         for (Map.Entry<String, Double> entry :
                 bal.entrySet()) {
             System.out.print(entry.getKey());
@@ -123,7 +152,7 @@ public class SplitwiseMain {
         }
     }
 
-    private void addExpense(List<Expense> expenses, HashSet<String> members, BufferedReader in, Splitwise splitwise) throws IOException {
+    public void addExpense(List<Expense> expenses, HashSet<String> members, BufferedReader in, BillsSplit billsSplit) throws IOException {
         String by;
         double amt;
         String act;
@@ -134,7 +163,7 @@ public class SplitwiseMain {
             boolean addOrNot = members.add(by);
             if(addOrNot)
                 System.out.println("New member added");
-            else System.out.println("New member not added");
+            else System.out.println("Member already exists");
             System.out.println("Enter the amount paid by " + by + ":");
             amt = Double.parseDouble(in.readLine());
             System.out.println("Enter the type of expense for which the amount is paid:");
