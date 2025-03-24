@@ -50,21 +50,15 @@ public class BillsSplitMain {
             choice = Integer.parseInt(in.readLine());
             switch (choice) {
                 case 1:
-                    ob.addExpense(expenses, members, in, billsSplit);
-                    break;
-                case 2:
-                    ob.addMembers(members, in);
-                    break;
-                case 3:
                     ob.viewExpenses(expenses);
                     break;
-                case 4:
+                case 2:
                     ob.viewBalancesOfEachMember(billsSplit.getBal());
                     break;
-                case 5:
+                case 3:
                     billsSplit.debtSimplify();
                     break;
-                case 6:
+                case 4:
                     Transaction t = billsSplit.splitExpense(in);
                     if (t == null) System.out.println("Transaction Unsuccessful");
                     else {
@@ -72,13 +66,13 @@ public class BillsSplitMain {
                         transactions.add(t);
                     }
                     break;
-                case 7:
+                case 5:
                     ob.viewTransaction(transactions);
                     break;
-                case 8:
+                case 6:
                     ob.viewLendersBorrowers(billsSplit.simplifyBorrowerLender());
                     break;
-                case 9:
+                case 7:
                     return;
                 default:
                     System.out.println("Invalid Choice!!!!! \nPlease enter a valid choice:");
@@ -87,15 +81,13 @@ public class BillsSplitMain {
     }
 
     public static void displayOptions(){
-//        System.out.println("1. Add expense");   //done
-//        System.out.println("2. Add members");   //done
-        System.out.println("3. Expenses");  //done
-        System.out.println("4. Balance of Each Member");    //done
-        System.out.println("5. Debt Simplifier");
-        System.out.println("6. Return Money Transaction");
-        System.out.println("7. View All Return Transactions");
-        System.out.println("8. View Lenders and Borrowers");
-        System.out.println("9. Exit");
+        System.out.println("1. Expenses");
+        System.out.println("2. Balance of Each Member");
+        System.out.println("3. Debt Simplifier");
+        System.out.println("4. Return Money Transaction");
+        System.out.println("5. View All Return Transactions");
+        System.out.println("6. View Lenders and Borrowers");
+        System.out.println("7. Exit");
     }
 
     private void viewLendersBorrowers(Map<String, Map<String, Double>> simplifyBorrowerLender) {
@@ -106,30 +98,33 @@ public class BillsSplitMain {
         Map<String, Double> lender = simplifyBorrowerLender.get("Lender");
         Map<String, Double> borrower = simplifyBorrowerLender.get("Borrower");
         boolean f1 = false, f2 = false;
+
         if (!lender.isEmpty()) {
             System.out.println("Lenders:");
             for (Map.Entry<String, Double> entry :
                     lender.entrySet()) {
                 System.out.println(entry.getKey());
-                f1 = !f1;
+                f1 = true;
             }
 
         }
+
         if (!borrower.isEmpty()) {
             System.out.println("Borrower:");
             for (Map.Entry<String, Double> entry :
                     borrower.entrySet()) {
                 System.out.println(entry.getKey());
-                f2 = !f2;
+                f2 = true;
             }
-            if (f1 && f2)
-                System.out.println("There are no lenders and borrowers");
         }
+        if (f1 && f2)
+            return;
+        System.out.println("There are no lenders and borrowers");
     }
 
     private void viewTransaction(List<Transaction> transactions) {
         if (transactions.isEmpty()) {
-            System.out.println("Nobody returned money yet");
+            System.out.println("Nobody has returned any money yet.");
         }
         for (Transaction t :
                 transactions) {

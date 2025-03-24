@@ -65,8 +65,6 @@ public class BillsSplit {
         while (!lender.isEmpty() && !borrower.isEmpty()){
             Map.Entry<String, Double> debtor = borrower.poll();
             Map.Entry<String, Double> creditor = lender.poll();
-//            borrower.remove();
-//            lender.remove();
 
             double amtToBePayed = Math.round(Math.min(Math.abs(debtor.getValue()), creditor.getValue())) * 1.0;
             System.out.println(debtor.getKey() + " needs to pay " + creditor.getKey() + ": Rs." + amtToBePayed);
