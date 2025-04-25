@@ -1,44 +1,54 @@
-package com.SplitwiseVabna;
+package com.BillsSplitMain.service;
 
-import java.io.*;
-import java.util.*;
+import com.BillsSplitMain.model.Expense;
+import com.BillsSplitMain.model.Member;
+import com.BillsSplitMain.model.Transaction;
 
-public class BillsSplitMain {
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
-    public static void main(String[] args) throws IOException {
-	// write your code here
-        HashSet<String> members = new HashSet<>();/*HashSet ensures that all elements are unique, and it does not allow duplicates.
-        HashSet does not maintain the order of elements. It provides constant-time (O(1)) performance for adding, removing, and checking the existence of elements.*/
-        ArrayList expenses = new ArrayList<>();/*ArrayList maintains the insertion order of elements, allowing access by index.
-        ArrayList permits duplicate elements.It provides fast (O(1)) access to elements using their index.*/
-        List<Transaction> transactions = new ArrayList<>();
+public class BillsSplitUtil {
+    private HashSet<Member> members;
+//    HashSet ensures that all elements are unique, and it does not allow duplicates.
+//        HashSet does not maintain the order of elements. It provides constant-time (O(1)) performance for adding, removing, and checking the existence of elements.*/
+    private List<Expense> expenses;//ArrayList maintains the insertion order of elements, allowing access by index.
+//        ArrayList permits duplicate elements.It provides fast (O(1)) access to elements using their index.
+    private List<Transaction> transactions;
+    private BillsSplit billsSplit;
 
-        InputStreamReader read = new InputStreamReader(System.in);
-        BufferedReader in = new BufferedReader(read);
-        BillsSplitMain ob = new BillsSplitMain();
-        System.out.println("Welcome to BILLS SPLIT");
-        BillsSplit billsSplit = new BillsSplit(members, expenses);
+    public BillsSplitUtil() {
+        this.members = new HashSet<>();
+        this.expenses  = new ArrayList<>();
+        this.transactions  = new ArrayList<>();
+        billsSplit = new BillsSplit(members, expenses);
+    }
 
+    public void initialConfig(BufferedReader in ) throws IOException {
         System.out.println("Enter details of expense:");
 
-        ob.addExpense(expenses, members, in, billsSplit);
+        this.addExpense(in);
         System.out.println("-----------------------------------------------------------------------------------------------------------------------");
 
         System.out.println("Do you want to add more members (Y / y):");
         char c = Character.toLowerCase(in.readLine().charAt(0));
         if(c == 'y')
-            ob.addMembers(members, in);
+            this.addMembers(in);
         System.out.println("-----------------------------------------------------------------------------------------------------------------------");
 
-        ob.viewExpenses(expenses);
+        this.viewExpenses(expenses);
         System.out.println("-----------------------------------------------------------------------------------------------------------------------");
 
         billsSplit.calculateBalancesOfEachMember();
-        ob.viewBalancesOfEachMember(billsSplit.getBal());
-        System.out.println("-----------------------------------------------------------------------------------------------------------------------");
-
-
-        int choice = 0;
+        this.viewBalancesOfEachMember(billsSplit.getBal());
+//        System.out.println("-----------------------------------------------------------------------------------------------------------------------");
+        this.options(in, billsSplit);
+    }
+    public void options(BufferedReader in, BillsSplit billsSplit) throws IOException {
+        int choice ;
 
 
         while (true) {
@@ -50,10 +60,10 @@ public class BillsSplitMain {
             choice = Integer.parseInt(in.readLine());
             switch (choice) {
                 case 1:
-                    ob.viewExpenses(expenses);
+                    this.viewExpenses(expenses);
                     break;
                 case 2:
-                    ob.viewBalancesOfEachMember(billsSplit.getBal());
+                    this.viewBalancesOfEachMember(billsSplit.getBal());
                     break;
                 case 3:
                     billsSplit.debtSimplify();
@@ -67,15 +77,15 @@ public class BillsSplitMain {
                     }
                     break;
                 case 5:
-                    ob.viewTransaction(transactions);
+                    this.viewTransaction(transactions);
                     break;
                 case 6:
-                    ob.viewLendersBorrowers(billsSplit.simplifyBorrowerLender());
+                    this.viewLendersBorrowers(billsSplit.simplifyBorrowerLender());
                     break;
                 case 7:
                     return;
                 default:
-                    System.out.println("Invalid Choice!!!!! \nPlease enter a valid choice:");
+                    System.out.println("Invalid Choice!!!!! \nPlease make a valid choice:");
             }
         }
     }
@@ -90,7 +100,7 @@ public class BillsSplitMain {
         System.out.println("7. Exit");
     }
 
-    private void viewLendersBorrowers(Map<String, Map<String, Double>> simplifyBorrowerLender) {
+    public void viewLendersBorrowers(Map<String, Map<String, Double>> simplifyBorrowerLender) {
         if (simplifyBorrowerLender.isEmpty()) {
             System.out.println("No Records!!!!!!!!!!!!!!!!");
             return;
@@ -122,7 +132,7 @@ public class BillsSplitMain {
         System.out.println("There are no lenders and borrowers");
     }
 
-    private void viewTransaction(List<Transaction> transactions) {
+    public void viewTransaction(List<Transaction> transactions) {
         if (transactions.isEmpty()) {
             System.out.println("Nobody has returned any money yet.");
         }
@@ -147,14 +157,14 @@ public class BillsSplitMain {
         }
     }
 
-    public void addExpense(List<Expense> expenses, HashSet<String> members, BufferedReader in, BillsSplit billsSplit) throws IOException {
-        String by;
+    public void addExpense(BufferedReader in) throws IOException {
+        Member by;
         double amt;
         String act;
         char ch = 'y';
         while (Character.toLowerCase(ch) == 'y'){
             System.out.println("Enter the payer's name:");
-            by = in.readLine();
+            by = new Member(in.readLine());
             boolean addOrNot = members.add(by);
             if(addOrNot)
                 System.out.println("New member added");
@@ -170,18 +180,18 @@ public class BillsSplitMain {
         }
     }
 
-    private void addMembers(HashSet<String> members, BufferedReader in) throws IOException {
+    public void addMembers(BufferedReader in) throws IOException {
         while (true){
             if (!members.isEmpty()) {
                 System.out.println("Members Present");
-                for (String s :
+                for (Member member :
                         members) {
-                    System.out.println(s);
+                    System.out.println(member.getName());
                 }
             }
             System.out.println("Enter the name of member to be added:");
             String name = in.readLine();
-            members.add(name);
+            members.add(new Member(name));
             System.out.println("Enter Y/y if you want to continue adding members else press any character");
             char ch = in.readLine().charAt(0);
             if(ch != 'y' && ch != 'Y')
@@ -189,7 +199,7 @@ public class BillsSplitMain {
         }
     }
 
-    private void viewExpenses(List<Expense> expenses){
+    public void viewExpenses(List<Expense> expenses){
         if(expenses.isEmpty()){
             System.out.println("No expenses added");
             return;
@@ -200,6 +210,5 @@ public class BillsSplitMain {
             System.out.println(e.getPayedBy() + " paid Rs." + e.getAmount() + " for " + e.getActivity());
         }
     }
+
 }
-
-

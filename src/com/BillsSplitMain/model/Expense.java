@@ -1,18 +1,22 @@
-package com.SplitwiseVabna;
+package com.BillsSplitMain.model;
 
 public class Expense {
-    private String payedBy;
+    private Member payedBy;
     private double amount;
     private String activity;
 
-    public Expense(String payedBy, double amount, String activity) {
+    public Expense(Member payedBy, double amount, String activity) {
         this.payedBy = payedBy;
         this.amount = amount;
         this.activity = activity;
     }
 
-    public String getPayedBy() {
+    public Member getPayedBy() {
         return payedBy;
+    }
+
+    public void setPayedBy(Member payedBy) {
+        this.payedBy = payedBy;
     }
 
     public double getAmount() {

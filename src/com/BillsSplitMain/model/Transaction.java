@@ -1,4 +1,4 @@
-package com.SplitwiseVabna;
+package com.BillsSplitMain.model;
 
 public class Transaction {
     private String from;

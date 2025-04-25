@@ -1,15 +1,19 @@
-package com.SplitwiseVabna;
+package com.BillsSplitMain.service;
+
+import com.BillsSplitMain.model.Expense;
+import com.BillsSplitMain.model.Member;
+import com.BillsSplitMain.model.Transaction;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.*;
 
 public class BillsSplit {
-    private HashSet<String> members;
+    private HashSet<Member> members;
     private List<Expense> expenses;
     private HashMap<String, Double> bal;
 
-    public BillsSplit(HashSet<String> members, List<Expense> expenses) {
+    public BillsSplit(HashSet<Member> members, List<Expense> expenses) {
         this.members = members;
         this.expenses = expenses;
         bal = new HashMap<>();
@@ -23,11 +27,11 @@ public class BillsSplit {
     public void calculateBalancesOfEachMember(){
         double eachShare = calculateEachMemberShare();
 
-        for (String m :
+        for (Member m :
                 members) {
-            double expOfMember = expenses.stream().filter(exp -> exp.getPayedBy().equalsIgnoreCase(m))
+            double expOfMember = expenses.stream().filter(exp -> exp.getPayedBy().getName().equalsIgnoreCase(m.getName()))
                     .mapToDouble(Expense :: getAmount).sum();
-            bal.put(m, Math.round(expOfMember - eachShare) * 1.0);
+            bal.put(m.getName(), Math.round(expOfMember - eachShare) * 1.0);
         }
     }
 
